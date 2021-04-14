@@ -63,7 +63,7 @@ public class DefaultOsuClient implements OsuClient{
 
     @Override
     public Beatmap getBeatmap(String beatmapId) {
-        return requester.requestApi(Route.Beatmaps.GET_BEATMAP.compile(beatmapId), token, Beatmap.class);
+        return requester.requestApi(Route.BEATMAP.compile(beatmapId), token, Beatmap.class);
     }
 
     @JsonIgnoreProperties({"token_type"})

@@ -2,16 +2,12 @@ package fr.syudagye.josu.requests;
 
 public class Route {
 
-    public static class Beatmaps
-    {
-        private static final String BASE_ROUTE = "beatmaps/";
+    /* BEATMAPS */
 
-        public static final Route LOOKUP =              new Route(Method.GET, BASE_ROUTE + "lookup");
-        public static final Route GET_BEATMAP =         new Route(Method.GET, BASE_ROUTE + "{beatmap_id}");
-
-        public static final Route GET_BEATMAP_SCORES =  new Route(Method.GET, BASE_ROUTE + "{beatmap_id}/scores");
-        public static final Route GET_BEATMAP_SCORE =   new Route(Method.GET, BASE_ROUTE + "{beatmap_id}/scores/users/{user}");
-    }
+    public static final Route LOOKUP =              new Route(Method.GET, "beatmaps/lookup");
+    public static final Route BEATMAP =         new Route(Method.GET, "beatmaps/{beatmap_id}");
+    public static final Route BEATMAP_SCORES =  new Route(Method.GET, "beatmaps/{beatmap_id}/scores");
+    public static final Route BEATMAP_USER_SCORE =   new Route(Method.GET, "beatmaps/{beatmap_id}/scores/users/{user}");
 
     private Method method;
     private String route;

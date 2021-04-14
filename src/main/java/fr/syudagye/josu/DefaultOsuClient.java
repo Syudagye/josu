@@ -6,6 +6,7 @@ import com.fasterxml.jackson.databind.ObjectMapper;
 import com.fasterxml.jackson.databind.json.JsonMapper;
 import com.fasterxml.jackson.databind.node.ObjectNode;
 import fr.syudagye.josu.model.Beatmap;
+import fr.syudagye.josu.requests.Requester;
 import fr.syudagye.josu.requests.Route;
 import okhttp3.*;
 import org.slf4j.Logger;
@@ -17,6 +18,8 @@ public class DefaultOsuClient implements OsuClient{
 
     public static final Logger LOGGER = LoggerFactory.getLogger(OsuClient.class);
 
+    protected static Requester requester = new Requester();
+
     private String token;
     private int tokenTimeout;
 
@@ -24,13 +27,12 @@ public class DefaultOsuClient implements OsuClient{
     {
         this.token = token;
         this.tokenTimeout = tokenTimeout;
+
     }
 
     public static DefaultOsuClient create(String cliendId, String clienSecret)
     {
         LOGGER.info(String.format("Retrieving token with client credentials from osu.ppy.sh"));
-
-        OkHttpClient client = new OkHttpClient();
 
         ObjectMapper mapper = new ObjectMapper();
         ObjectNode body= mapper.createObjectNode();
@@ -48,7 +50,7 @@ public class DefaultOsuClient implements OsuClient{
                 .build();
 
         try {
-            Response response = client.newCall(request).execute();
+            Response response = Requester.httpClient.newCall(request).execute();
             String resBody = response.body().string();
             DefaultTokenObject tokenObject = new JsonMapper().readValue(resBody, DefaultTokenObject.class);
 
@@ -61,24 +63,7 @@ public class DefaultOsuClient implements OsuClient{
 
     @Override
     public Beatmap getBeatmap(String beatmapId) {
-        OkHttpClient client = new OkHttpClient();
-
-        Request request = new Request.Builder()
-                .url(OSU_ENDPOINT + Route.Beatmaps.GET_BEATMAP.compile(beatmapId))
-                .addHeader("Authorization", "Bearer " + token)
-                .build();
-
-        try {
-            Response response = client.newCall(request).execute();
-            String body = response.body().string();
-            LOGGER.debug(body);
-            Beatmap beatmap = new JsonMapper().readValue(body, Beatmap.class);
-            return beatmap;
-        } catch (IOException e) {
-            e.printStackTrace();
-        }
-
-        return null;
+        return requester.requestApi(Route.Beatmaps.GET_BEATMAP.compile(beatmapId), token, Beatmap.class);
     }
 
     @JsonIgnoreProperties({"token_type"})
